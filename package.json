@@ -1,0 +1,22 @@
+{
+  "name": "rust-react-starter",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
+    "build": "npm run frontend:build && npm run backend:build",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "backend:dev": "cd backend && cargo run",
+    "backend:dev:watch": "cd backend && cargo watch -x run",
+    "backend:build": "cd backend && cargo build --release",
+    "prepare-db": "node scripts/prepare-db.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  }
+}

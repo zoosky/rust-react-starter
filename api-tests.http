@@ -1,0 +1,144 @@
+###
+# Rust React Starter API Tests
+# Use with VS Code REST Client extension
+# Make sure the backend is running: pnpm backend:dev
+###
+
+@baseUrl = http://localhost:3001/api
+
+### Health Check
+GET {{baseUrl}}/health
+
+### Hello Endpoint
+POST {{baseUrl}}/hello
+Content-Type: application/json
+
+{
+  "name": "VS Code REST Client"
+}
+
+### Get All Users
+GET {{baseUrl}}/users
+
+### Create User
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Jane Smith",
+  "email": "jane.smith@example.com"
+}
+
+### Create Another User (for testing)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Bob Johnson",
+  "email": "bob.johnson@example.com"
+}
+
+### Get Specific User (replace with actual ID from previous response)
+# @name createUser
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Test User for ID",
+  "email": "test.user@example.com"
+}
+
+### Get User by ID (uses response from above)
+GET {{baseUrl}}/users/{{createUser.response.body.data.id}}
+
+### Update User (uses response from createUser)
+PUT {{baseUrl}}/users/{{createUser.response.body.data.id}}
+Content-Type: application/json
+
+{
+  "name": "Updated Test User",
+  "email": "updated.test.user@example.com"
+}
+
+### Get All Projects
+GET {{baseUrl}}/projects
+
+### Create Project (requires a user ID)
+# @name createUserForProject
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Project Owner",
+  "email": "project.owner@example.com"
+}
+
+### Create Project with User ID
+POST {{baseUrl}}/projects
+Content-Type: application/json
+
+{
+  "name": "My Awesome Project",
+  "description": "This is a test project created via REST Client",
+  "user_id": "{{createUserForProject.response.body.data.id}}"
+}
+
+### Create Project without Description
+POST {{baseUrl}}/projects
+Content-Type: application/json
+
+{
+  "name": "Simple Project",
+  "user_id": "{{createUserForProject.response.body.data.id}}"
+}
+
+### Delete User (uses response from createUser)
+DELETE {{baseUrl}}/users/{{createUser.response.body.data.id}}
+
+### Verify User Deleted (should return 404)
+GET {{baseUrl}}/users/{{createUser.response.body.data.id}}
+
+### Test Error Cases
+
+### Invalid JSON
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Invalid User"
+  # Missing email field
+}
+
+### Invalid Email Format
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Invalid Email User",
+  "email": "not-an-email"
+}
+
+### Duplicate Email (run after creating first user)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Duplicate Email User",
+  "email": "jane.smith@example.com"
+}
+
+### Non-existent User ID
+GET {{baseUrl}}/users/00000000-0000-0000-0000-000000000000
+
+### Invalid UUID Format
+GET {{baseUrl}}/users/invalid-uuid
+
+### Project with Non-existent User ID
+POST {{baseUrl}}/projects
+Content-Type: application/json
+
+{
+  "name": "Orphan Project",
+  "description": "This project has no valid user",
+  "user_id": "00000000-0000-0000-0000-000000000000"
+}
